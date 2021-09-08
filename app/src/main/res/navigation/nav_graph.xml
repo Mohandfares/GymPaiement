@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/athleteListFragment">
+    <fragment
+        android:id="@+id/athleteListFragment"
+        android:name="com.dz.mobile.gympaiement.view.ui.list.AthleteListFragment"
+        android:label="athlete_fragment"
+        tools:layout="@layout/athlete_fragment" />
+</navigation>
