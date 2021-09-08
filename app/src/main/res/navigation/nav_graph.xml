@@ -8,5 +8,14 @@
         android:id="@+id/athleteListFragment"
         android:name="com.dz.mobile.gympaiement.view.ui.list.AthleteListFragment"
         android:label="athlete_fragment"
-        tools:layout="@layout/athlete_fragment" />
+        tools:layout="@layout/athlete_fragment" >
+        <action
+            android:id="@+id/action_athleteListFragment_to_addAthleteFragment"
+            app:destination="@id/addAthleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAthleteFragment"
+        android:name="com.dz.mobile.gympaiement.view.ui.add.AddAthleteFragment"
+        android:label="add_athlete_fragment"
+        tools:layout="@layout/add_athlete_fragment" />
 </navigation>

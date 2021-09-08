@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dz.mobile.gympaiement.data.bo.Athlete
 import com.dz.mobile.gympaiement.databinding.AthleteItemBinding
 
-class AthleteAdapter : ListAdapter<Athlete, AthleteAdapter.AthleteViewHolder>(DiffCallback()) {
+class AthleteAdapter(private val listener: OnItemClickListener) : ListAdapter<Athlete, AthleteAdapter.AthleteViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AthleteViewHolder {
         val binding = AthleteItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
@@ -20,7 +20,17 @@ class AthleteAdapter : ListAdapter<Athlete, AthleteAdapter.AthleteViewHolder>(Di
         holder.bind(item)
     }
 
-    class AthleteViewHolder(private val binding: AthleteItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class AthleteViewHolder(private val binding: AthleteItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.apply {
+                val position = layoutPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    raw.setOnClickListener {
+                        listener.onItemClick(getItem(position))
+                    }
+                }
+            }
+        }
         fun bind(athlete: Athlete) {
             binding.apply {
                 name.text = athlete.firstAndLastName
@@ -36,4 +46,7 @@ class AthleteAdapter : ListAdapter<Athlete, AthleteAdapter.AthleteViewHolder>(Di
             oldItem == newItem
     }
 
+    fun interface OnItemClickListener {
+        fun onItemClick(athlete: Athlete)
+    }
 }
