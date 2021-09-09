@@ -71,5 +71,4 @@ class AddAthleteViewModel @Inject constructor(
         object SaveWithSuccess : AddEvent()
         object SaveError : AddEvent()
     }
-
 }

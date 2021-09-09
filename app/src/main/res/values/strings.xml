@@ -5,6 +5,11 @@
     <string name="typepayment">Type de paiement</string>
     <string name="montant">Montant</string>
     <string name="date">Date</string>
+    <string name="errorfirstlastname">Ajouter le nom et prénom !</string>
+    <string name="errormontant">Ajouter le montant !</string>
+    <string name="errorsave">Impossible d\'ajouter un athlete</string>
+    <string name="emptystatetextone">Aucun athlete !</string>
+    <string name="emptystatetextsecondary">Veuillez appuyer sur le bouton + pour créer un nouveau</string>
 
     <array name="typepaymentvalues">
         <item>Par mois</item>

@@ -1,8 +1,9 @@
 package com.dz.mobile.gympaiement.view.ui.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -10,8 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dz.mobile.gympaiement.R
 import com.dz.mobile.gympaiement.databinding.AthleteFragmentBinding
-import com.dz.mobile.gympaiement.view.Ext.makeToast
 import com.dz.mobile.gympaiement.view.Ext.onTextChanged
+import com.dz.mobile.gympaiement.view.ui.detailed.DetailedActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -46,6 +47,7 @@ class AthleteListFragment : Fragment(R.layout.athlete_fragment) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.athletes.collect { athletes ->
                     athleteAdapter.submitList(athletes)
+                    llemptystate.isVisible = athletes.isEmpty()
                 }
             }
 
@@ -57,7 +59,11 @@ class AthleteListFragment : Fragment(R.layout.athlete_fragment) {
                             findNavController().navigate(action)
                         }
                         is AthleteViewModel.NavigationEvent.NavigationDetailed -> {
-                            makeToast("Detailed")
+                            val athlete = events.athlete
+                            val intent = Intent(requireActivity(),DetailedActivity::class.java).apply {
+                                putExtra("athlete",athlete)
+                            }
+                            startActivity(intent)
                         }
                     }
                 }

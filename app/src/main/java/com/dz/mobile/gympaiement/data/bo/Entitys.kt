@@ -29,7 +29,7 @@ data class Payment(
 
 object DateConverter {
 
-    val format = SimpleDateFormat("yyyy-MM-dd")
+    private val format = SimpleDateFormat("yyyy-MM-dd")
 
     @TypeConverter
     fun toDate(dateString: String?): Date? {

@@ -23,12 +23,13 @@ class AthleteAdapter(private val listener: OnItemClickListener) : ListAdapter<At
     inner class AthleteViewHolder(private val binding: AthleteItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.apply {
-                val position = layoutPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    raw.setOnClickListener {
+                raw.setOnClickListener {
+                    val position = layoutPosition
+                    if (position != RecyclerView.NO_POSITION) {
                         listener.onItemClick(getItem(position))
                     }
                 }
+
             }
         }
         fun bind(athlete: Athlete) {

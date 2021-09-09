@@ -28,6 +28,7 @@
         android:layout_marginStart="8dp"
         android:singleLine="true"
         android:text="Athlete fistAndLastName"
+        android:textDirection="locale"
         />
 
     <ImageButton
@@ -38,6 +39,7 @@
         android:layout_margin="16dp"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_baseline_more_vert_24"
+        android:visibility="gone"
         />
 
 </RelativeLayout>

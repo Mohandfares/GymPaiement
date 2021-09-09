@@ -2,9 +2,11 @@ package com.dz.mobile.gympaiement.view.Ext
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,3 +31,25 @@ fun Fragment.makeToast(text: String) {
 fun Date.toStringFormat(): String = SimpleDateFormat("yyyy-MM-dd").format(this)
 
 fun String.toDateFormat(): Date = SimpleDateFormat("yyyy-MM-dd").parse(this)
+
+fun View.visible() {
+    visibility = View.VISIBLE
+}
+
+fun View.invisible() {
+    visibility = View.INVISIBLE
+}
+
+fun View.gone() {
+    visibility = View.GONE
+}
+
+fun Double.toStringFormat(): String {
+    val format = when {
+        this >= 10000 -> DecimalFormat("#0,000.00")
+        this >= 100 -> DecimalFormat("#000.00")
+        this >= 10 -> DecimalFormat("#00.00")
+        else -> DecimalFormat("0.00")
+    }
+    return format.format(this).replace(",", ".")
+}

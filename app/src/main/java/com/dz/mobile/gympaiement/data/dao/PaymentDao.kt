@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PaymentDao {
 
-    @Query("SELECT * FROM Payment WHERE AthleteId = :AthleteId")
+    @Query("SELECT * FROM Payment WHERE AthleteId = :AthleteId ORDER BY date DESC")
     fun getAthletePayments(AthleteId: Int): Flow<List<Payment>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

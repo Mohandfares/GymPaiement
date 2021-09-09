@@ -49,8 +49,8 @@ class AddAthleteFragment : Fragment(R.layout.add_athlete_fragment) {
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.firstAndLastNameState.collect {
-                    tilfirstlastname.error = if (it.isNullOrBlank()) {
-                        "Ajouter le nom et prénom !"
+                    tilfirstlastname.error = if (it.isBlank()) {
+                        getString(R.string.errorfirstlastname)
                     } else {
                         null
                     }
@@ -59,11 +59,11 @@ class AddAthleteFragment : Fragment(R.layout.add_athlete_fragment) {
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.amountState.collect {
-                    tilmontant.error = if (it.isNullOrBlank()) {
-                        "Ajouter le montant !"
+                    tilmontant.error = if (it.isBlank()) {
+                        getString(R.string.errormontant)
                     } else {
                         if (it.toInt() == 0) {
-                            "Ajouter le montant !"
+                            getString(R.string.errormontant)
                         } else {
                             null
                         }
@@ -74,7 +74,7 @@ class AddAthleteFragment : Fragment(R.layout.add_athlete_fragment) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.events.collect { events ->
                     when (events) {
-                        AddAthleteViewModel.AddEvent.SaveError -> makeToast("Impocible d'ajouter un athlete")
+                        AddAthleteViewModel.AddEvent.SaveError -> makeToast(getString(R.string.errorsave))
                         AddAthleteViewModel.AddEvent.SaveWithSuccess -> findNavController().popBackStack()
                     }
                 }
