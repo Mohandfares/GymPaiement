@@ -5,6 +5,8 @@ import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import java.text.SimpleDateFormat
+import java.util.*
 
 inline fun EditText.onTextChanged(crossinline listener: (String) -> Unit) {
     addTextChangedListener(object : TextWatcher {
@@ -23,3 +25,7 @@ inline fun EditText.onTextChanged(crossinline listener: (String) -> Unit) {
 fun Fragment.makeToast(text: String) {
     Toast.makeText(requireContext(),text,Toast.LENGTH_LONG).show()
 }
+
+fun Date.toStringFormat(): String = SimpleDateFormat("yyyy-MM-dd").format(this)
+
+fun String.toDateFormat(): Date = SimpleDateFormat("yyyy-MM-dd").parse(this)

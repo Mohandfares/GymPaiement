@@ -65,11 +65,6 @@ class AthleteListFragment : Fragment(R.layout.athlete_fragment) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        requireView().requestFocus()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
