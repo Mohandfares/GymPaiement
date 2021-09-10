@@ -3,9 +3,11 @@ package com.dz.mobile.gympaiement.view.Ext
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,6 +45,9 @@ fun View.invisible() {
 fun View.gone() {
     visibility = View.GONE
 }
+
+fun TextInputEditText.value() = text.toString()
+fun AutoCompleteTextView.value() = text.toString()
 
 fun Double.toStringFormat(): String {
     val format = when {

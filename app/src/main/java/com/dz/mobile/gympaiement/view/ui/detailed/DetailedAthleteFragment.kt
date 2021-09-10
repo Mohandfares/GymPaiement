@@ -1,8 +1,14 @@
 package com.dz.mobile.gympaiement.view.ui.detailed
 
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.view.Window
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Button
+import android.widget.ImageButton
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,10 +17,17 @@ import com.dz.mobile.gympaiement.R
 import com.dz.mobile.gympaiement.data.bo.Athlete
 import com.dz.mobile.gympaiement.databinding.DetailedAthleteFragmentBinding
 import com.dz.mobile.gympaiement.view.Ext.gone
+import com.dz.mobile.gympaiement.view.Ext.makeToast
+import com.dz.mobile.gympaiement.view.Ext.value
 import com.dz.mobile.gympaiement.view.Ext.visible
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
@@ -24,12 +37,16 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
     private val viewModel: DetailedViewModel by viewModels()
     private lateinit var paymentAthleteAdapter: PaymentAthleteAdapter
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DetailedAthleteFragmentBinding.bind(view)
         paymentAthleteAdapter = PaymentAthleteAdapter()
         val athlete = arguments?.get("athlete") as Athlete
         binding.apply {
+            add.setOnClickListener {
+                dialogPayment(athlete.idAthlete)
+            }
             paymentsRecyclerView.apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(requireContext())
@@ -47,8 +64,48 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
         }
     }
 
+    private var jobSave: Job? = null
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private fun dialogPayment(AthleteId: Int) {
+        val dialog = BottomSheetDialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.dialog_payment)
+            val close = findViewById<ImageButton>(R.id.close)!!
+            close.setOnClickListener { dismiss() }
+        }
+        val typepayment = dialog.findViewById<AutoCompleteTextView>(R.id.typepayment)!!
+        val itemsTypePayment = resources.getStringArray(R.array.typepaymentvalues)
+        val typePaymentAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_list_item_1, itemsTypePayment)
+        typepayment.apply {
+            setAdapter(typePaymentAdapter)
+            setText(itemsTypePayment[0],false)
+        }
+        val tilmontant = dialog.findViewById<TextInputLayout>(R.id.tilmontant)!!
+        val montant = dialog.findViewById<TextInputEditText>(R.id.montant)!!
+        val confirmer = dialog.findViewById<Button>(R.id.confirmer)!!
+        confirmer.setOnClickListener {
+            jobSave?.cancel()
+            jobSave = viewLifecycleOwner.lifecycleScope.launch {
+                when (val save = viewModel.save(montant.value(),typepayment.value(),AthleteId)) {
+                    is DetailedViewModel.SavePaymentResult.ErrorSavePayment ->
+                        tilmontant.error = save.error
+                    DetailedViewModel.SavePaymentResult.SaveWithSuccess ->
+                        dialog.dismiss()
+                    DetailedViewModel.SavePaymentResult.PaymentIsSaved ->
+                        makeToast("Payment exited")
+                }
+            }
+        }
+        dialog.show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        jobSave?.cancel()
     }
 }
