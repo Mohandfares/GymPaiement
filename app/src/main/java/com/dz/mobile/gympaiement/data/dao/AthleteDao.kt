@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AthleteDao {
 
-    @Query("SELECT * FROM Athlete WHERE firstAndLastName LIKE '%' || :searchQuery || '%' ORDER BY idAthlete DESC")
+    @Query("SELECT * FROM Athlete WHERE firstAndLastName LIKE '%' || :searchQuery || '%' ORDER BY lastPaymentDate DESC")
     fun getAthletes(searchQuery: String): Flow<List<Athlete>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

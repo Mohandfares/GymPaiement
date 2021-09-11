@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.dz.mobile.gympaiement.R
 import com.dz.mobile.gympaiement.databinding.AddAthleteFragmentBinding
+import com.dz.mobile.gympaiement.view.Ext.dateDialog
 import com.dz.mobile.gympaiement.view.Ext.makeToast
 import com.dz.mobile.gympaiement.view.Ext.onTextChanged
 import com.dz.mobile.gympaiement.view.Ext.toStringFormat
@@ -44,6 +45,18 @@ class AddAthleteFragment : Fragment(R.layout.add_athlete_fragment) {
                 }
             }
             date.setText(Date().toStringFormat())
+            tildate.setEndIconOnClickListener {
+                dateDialog { dateSelected ->
+                    date.setText(dateSelected)
+                    viewModel.dateChange(dateSelected)
+                }
+            }
+            date.setOnClickListener {
+                dateDialog { dateSelected ->
+                    date.setText(dateSelected)
+                    viewModel.dateChange(dateSelected)
+                }
+            }
             firstlastname.onTextChanged { viewModel.firstAndLastNameChange(it) }
             montant.onTextChanged { viewModel.amountChange(it) }
 
@@ -67,6 +80,16 @@ class AddAthleteFragment : Fragment(R.layout.add_athlete_fragment) {
                         } else {
                             null
                         }
+                    }
+                }
+            }
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                viewModel.dateState.collect {
+                    tildate.error = if (it.time > Date().time && it.toStringFormat() != Date().toStringFormat()) {
+                        getString(R.string.errordate)
+                    } else {
+                        null
                     }
                 }
             }

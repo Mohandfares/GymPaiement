@@ -1,7 +1,9 @@
 package com.dz.mobile.gympaiement.view.ui.detailed
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.ArrayAdapter
@@ -16,10 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dz.mobile.gympaiement.R
 import com.dz.mobile.gympaiement.data.bo.Athlete
 import com.dz.mobile.gympaiement.databinding.DetailedAthleteFragmentBinding
-import com.dz.mobile.gympaiement.view.Ext.gone
-import com.dz.mobile.gympaiement.view.Ext.makeToast
-import com.dz.mobile.gympaiement.view.Ext.value
-import com.dz.mobile.gympaiement.view.Ext.visible
+import com.dz.mobile.gympaiement.view.Ext.*
+import com.dz.mobile.gympaiement.view.util.Constants
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -28,6 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.*
 
 @AndroidEntryPoint
 class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
@@ -45,7 +46,7 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
         val athlete = arguments?.get("athlete") as Athlete
         binding.apply {
             add.setOnClickListener {
-                dialogPayment(athlete.idAthlete)
+                dialogPayment(athlete)
             }
             paymentsRecyclerView.apply {
                 setHasFixedSize(true)
@@ -57,8 +58,24 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
                 progressBar.visible()
                 delay(1000)
                 viewModel.getAthletePayments(athlete.idAthlete).collect { payments ->
+                    abonnementtermine.gone()
                     paymentAthleteAdapter.submitList(payments)
                     progressBar.gone()
+                    if (payments[0].date?.toStringFormat() == Date().toStringFormat())
+                        return@collect
+                    val thisDay = Date().toStringFormat().split("-")
+                    val lastPayment = payments[0].date?.toStringFormat()?.split("-")!!
+                    if (lastPayment[0] == thisDay[0]) {
+                        if (lastPayment[1] != thisDay[1] && thisDay[1].toInt() - lastPayment[1].toInt() == 1) {
+                            if (thisDay[2].toInt() - lastPayment[2].toInt() >= 0) {
+                                abonnementtermine.visible()
+                            }
+                        } else if (thisDay[1].toInt() - lastPayment[1].toInt() > 1) {
+                            abonnementtermine.visible()
+                        }
+                    } else {
+                        abonnementtermine.visible()
+                    }
                 }
             }
         }
@@ -66,7 +83,7 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
 
     private var jobSave: Job? = null
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private fun dialogPayment(AthleteId: Int) {
+    private fun dialogPayment(athlete: Athlete) {
         val dialog = BottomSheetDialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.dialog_payment)
@@ -86,13 +103,15 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
         confirmer.setOnClickListener {
             jobSave?.cancel()
             jobSave = viewLifecycleOwner.lifecycleScope.launch {
-                when (val save = viewModel.save(montant.value(),typepayment.value(),AthleteId)) {
+                when (val save = viewModel.save(montant.value(),typepayment.value(),athlete)) {
                     is DetailedViewModel.SavePaymentResult.ErrorSavePayment ->
                         tilmontant.error = save.error
-                    DetailedViewModel.SavePaymentResult.SaveWithSuccess ->
+                    DetailedViewModel.SavePaymentResult.SaveWithSuccess -> {
                         dialog.dismiss()
+                        requireContext().sendBroadcast(Intent(Constants.REFRESH_ACTION))
+                    }
                     DetailedViewModel.SavePaymentResult.PaymentIsSaved ->
-                        makeToast("Payment exited")
+                        makeToast(getString(R.string.paiementexiste))
                 }
             }
         }

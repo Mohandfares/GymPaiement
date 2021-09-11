@@ -12,6 +12,7 @@ import java.util.*
 @Parcelize
 data class Athlete(
     val firstAndLastName: String,
+    val lastPaymentDate: Date?,
     @PrimaryKey(autoGenerate = true)
     val idAthlete: Int = 0
 ) : Parcelable

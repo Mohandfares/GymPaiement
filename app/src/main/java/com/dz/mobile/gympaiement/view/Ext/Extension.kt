@@ -1,13 +1,18 @@
 package com.dz.mobile.gympaiement.view.Ext
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog.OnDateSetListener
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AutoCompleteTextView
+import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.material.datepicker.MaterialStyledDatePickerDialog
 import com.google.android.material.textfield.TextInputEditText
+import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,12 +32,18 @@ inline fun EditText.onTextChanged(crossinline listener: (String) -> Unit) {
 }
 
 fun Fragment.makeToast(text: String) {
-    Toast.makeText(requireContext(),text,Toast.LENGTH_LONG).show()
+    Toast.makeText(requireContext(), text, Toast.LENGTH_LONG).show()
 }
 
 fun Date.toStringFormat(): String = SimpleDateFormat("yyyy-MM-dd").format(this)
 
 fun String.toDateFormat(): Date = SimpleDateFormat("yyyy-MM-dd").parse(this)
+
+fun Date.monthFormat(): String = SimpleDateFormat("MM").format(this)
+
+fun Date.month(): Int = SimpleDateFormat("MM").format(this).toInt()
+
+fun Date.day(): Int = SimpleDateFormat("dd").format(this).toInt()
 
 fun View.visible() {
     visibility = View.VISIBLE
@@ -57,4 +68,25 @@ fun Double.toStringFormat(): String {
         else -> DecimalFormat("0.00")
     }
     return format.format(this).replace(",", ".")
+}
+
+@SuppressLint("RestrictedApi", "SimpleDateFormat")
+inline fun Fragment.dateDialog(crossinline body: (String) -> Unit) {
+    val newCalendar = Calendar.getInstance()
+    val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+    val datePickerListener =
+        OnDateSetListener { view: DatePicker?, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+            val newDate = Calendar.getInstance()
+            newDate[Calendar.YEAR] = selectedYear
+            newDate[Calendar.MONTH] = selectedMonth
+            newDate[Calendar.DAY_OF_MONTH] = selectedDay
+            body(dateFormat.format(newDate.time))
+        }
+    return MaterialStyledDatePickerDialog(
+        requireContext(),
+        datePickerListener,
+        newCalendar[Calendar.YEAR],
+        newCalendar[Calendar.MONTH],
+        newCalendar[Calendar.DAY_OF_MONTH]
+    ).show()
 }

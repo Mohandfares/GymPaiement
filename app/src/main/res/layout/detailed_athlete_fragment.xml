@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:ignore="RtlCompat"
     tools:context=".view.ui.detailed.DetailedAthleteFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -26,6 +27,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/abonnementtermine"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:background="@color/teal_200"
+                    android:drawableStart="@drawable/ic_twotone_info_24"
+                    android:drawablePadding="5dp"
+                    android:drawableTint="@color/black"
+                    android:paddingStart="10dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:text="@string/abonnementtermine"
+                    android:textColor="@color/black"
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    />
+
                 <ImageView
                     android:layout_width="250dp"
                     android:layout_height="180dp"

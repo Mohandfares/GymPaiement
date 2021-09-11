@@ -1,13 +1,17 @@
 package com.dz.mobile.gympaiement.view.ui.add
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dz.mobile.gympaiement.R
 import com.dz.mobile.gympaiement.data.bo.Athlete
 import com.dz.mobile.gympaiement.data.bo.Payment
 import com.dz.mobile.gympaiement.data.dao.AthleteDao
 import com.dz.mobile.gympaiement.data.dao.PaymentDao
 import com.dz.mobile.gympaiement.view.Ext.toDateFormat
+import com.dz.mobile.gympaiement.view.Ext.toStringFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -24,8 +28,8 @@ class AddAthleteViewModel @Inject constructor(
 
     val firstAndLastNameState = MutableStateFlow("")
     val amountState = MutableStateFlow("")
+    val dateState = MutableStateFlow(Date())
     private val typePaymentState = MutableStateFlow("Par mois")
-    private val dateState = MutableStateFlow(Date())
 
     fun firstAndLastNameChange(value: String) {
         firstAndLastNameState.value = value
@@ -52,7 +56,11 @@ class AddAthleteViewModel @Inject constructor(
             eventsChannel.send(AddEvent.SaveError)
             return
         }
-        athleteDao.save(Athlete(firstAndLastNameState.value))
+        if (dateState.value.time  > Date().time && Date().toStringFormat() != dateState.value.toStringFormat()) {
+            eventsChannel.send(AddEvent.SaveError)
+            return
+        }
+        athleteDao.save(Athlete(firstAndLastNameState.value,dateState.value))
         val lastAthlete = athleteDao.findLastAthlete()
         val payment = Payment(
             amountState.value.toDouble(),
