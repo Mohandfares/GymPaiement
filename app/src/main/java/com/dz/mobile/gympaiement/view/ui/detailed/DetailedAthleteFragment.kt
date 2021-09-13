@@ -43,7 +43,7 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DetailedAthleteFragmentBinding.bind(view)
         paymentAthleteAdapter = PaymentAthleteAdapter()
-        val athlete = arguments?.get("athlete") as Athlete
+        val athlete = viewModel.athlete!!
         binding.apply {
             add.setOnClickListener {
                 dialogPayment(athlete)
@@ -57,7 +57,7 @@ class DetailedAthleteFragment : Fragment(R.layout.detailed_athlete_fragment) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 progressBar.visible()
                 delay(1000)
-                viewModel.getAthletePayments(athlete.idAthlete).collect { payments ->
+                viewModel.athletePayments.collect { payments ->
                     abonnementtermine.gone()
                     paymentAthleteAdapter.submitList(payments)
                     progressBar.gone()

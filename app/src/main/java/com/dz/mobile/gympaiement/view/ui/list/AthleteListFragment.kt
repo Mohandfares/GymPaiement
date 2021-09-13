@@ -122,6 +122,11 @@ class AthleteListFragment : Fragment(R.layout.athlete_fragment) {
         _binding = null
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireContext().registerReceiver(refreshReceiver, IntentFilter(Constants.REFRESH_ACTION))
+    }
+
     override fun onStart() {
         super.onStart()
         requireContext().registerReceiver(refreshReceiver, IntentFilter(Constants.REFRESH_ACTION))

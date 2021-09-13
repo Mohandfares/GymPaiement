@@ -1,6 +1,7 @@
 package com.dz.mobile.gympaiement.view.ui.detailed
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.dz.mobile.gympaiement.R
 import com.dz.mobile.gympaiement.data.bo.Athlete
@@ -21,12 +22,15 @@ class DetailedViewModel @Inject constructor(
     private val context: Context,
     private val paymentDao: PaymentDao,
     private val athleteDao: AthleteDao,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val athlete: Athlete? = savedStateHandle.get<Athlete?>("athlete")
     private val stateFlow = MutableStateFlow(Date())
-
-    fun getAthletePayments(AthleteId: Int) = stateFlow.flatMapLatest {
-        paymentDao.getAthletePayments(AthleteId)
+    val athletePayments = stateFlow.flatMapLatest {
+        athlete?.let {
+            paymentDao.getAthletePayments(it.idAthlete)
+        }!!
     }
 
     suspend fun save(
